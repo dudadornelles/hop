@@ -1,0 +1,4 @@
+provider:
+  name: ecs
+  agents:
+    intances: 2
