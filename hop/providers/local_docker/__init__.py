@@ -1,6 +1,6 @@
 import logging as log
-
 import docker
+from hop.core import console
 
 
 def _server_config(config, network):
@@ -29,23 +29,27 @@ def _agent_config(server_name, agent_name, network):
 def provision(hop_config):
     client = docker.from_env()
 
+    console("Using local_docker provider")
     network_name = hop_config.get('provider.network', 'hopnetwork')
     network = client.networks.create(network_name, driver="bridge")
 
     server_config = run_go_server(client, hop_config, network, network_name)
     run_go_agent(client, hop_config, network, network_name, server_config)
 
-    print("hop:: gocd is up and running on https://localhost:8154/")
+    # TODO: do some polling on the server to make sure it is up before saying it is
+    console("GoCD is up and running on https://localhost:8154/")
 
 
 def run_go_agent(client, hop_config, network, network_name, server_config):
+    number_of_agents = hop_config.get('provider.agents.instances', 1)
     server_hostname = server_config['hostname']
     go_agent_image = hop_config.get('provider.agents.image', 'gocd/gocd-agent')
     go_agent_name_prefix = hop_config.get('provider.agents.prefix', 'hop-agent')
 
     maybe_agents_containers = [c for c in client.containers.list() if c.name.startswith(go_agent_name_prefix)]
-    for i in range(0, hop_config.get('provider.agents.instances', 1)):
+    for i in range(0, number_of_agents):
         agent_name = "{0}-{1}".format(go_agent_name_prefix, i)
+        console("Starting {0} from {1}".format(agent_name, go_agent_image))
         if agent_name not in [a.name for a in maybe_agents_containers]:
             agent_config = _agent_config(server_hostname, agent_name, network_name)
             log.debug('creating AGENT with config %s', agent_config)
@@ -58,6 +62,7 @@ def run_go_server(client, hop_config, network, network_name):
     go_server_image = hop_config.get('provider.server.image', 'gocd/gocd-server')
     maybe_server_containers = [c for c in client.containers.list() if c.name == server_config['name']]
     if len(maybe_server_containers) == 0:
+        console("Starting GoCD server from {0}".format(go_server_image))
         log.debug('creating SERVER with config %s', server_config)
         server = client.containers.run(go_server_image, **server_config)
         network.connect(server)

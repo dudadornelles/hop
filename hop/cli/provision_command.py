@@ -1,4 +1,5 @@
 from importlib import import_module
+from hop.core import console
 
 
 def get_provisioner(provisioner_name):
@@ -22,5 +23,5 @@ class ProvisionCommand(object):
             print(exception)
             exit(1)
 
-        print("{} - Provisioning gocd".format(self.args.command))
+        console("Provisioning GoCD")
         provisioner.provision(self.hop_config)
