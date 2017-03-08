@@ -1,4 +1,5 @@
+name: hop-gocd
 provider:
-  name: ecs
-  agents:
-    intances: 2
+    name: local_docker
+    agents:
+        instances: 2

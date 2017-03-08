@@ -3,5 +3,4 @@ class InitCommand(object):
         self.args = args
 
     def execute(self):
-        print("Initializing hop in the current folder...")
-
+        print("{} - Initializing hop in the current folder...".format(self.args.command))

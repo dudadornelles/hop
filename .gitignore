@@ -3,3 +3,8 @@
 hop.iml
 .idea
 *.pyc
+*.swp
+nosetests.xml
+coverage.xml
+.coverage
+.hop

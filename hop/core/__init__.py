@@ -1,41 +1,50 @@
-import ruamel.yaml as yaml
 from os import path
 from os import getcwd, makedirs
+import ruamel.yaml as yaml
 
+from .hop_config import HopConfig
 CONFIG_DIR = path.join(getcwd(), '.hop')
-CONFIG_FILE = path.join(config_dir, 'hopconfig.yml')
+
 
 def read_yaml(fpath):
     return yaml.load(open(fpath).read(), Loader=yaml.RoundTripLoader, preserve_quotes=True) or {}
 
+
 def write_yaml(content, fpath):
     yaml.dump(content, open(fpath, 'w'), Dumper=yaml.RoundTripDumper)
 
-def _read_config():
-    if not path.exists(CONFIG_DIR):
-        makedirs(CONFIG_DIR)
-    if not path.exists(CONFIG_FILE):
-        open(CONFIG_FILE).close()
-    return read_yaml(config_file)
 
 
 class ConfigException(Exception):
     pass
 
 
-class HopConfig(object):
+class HopStateConfig(object):
+
+    def __init__(self, config_dir=CONFIG_DIR):
+        self.config_dir = config_dir
+        self.config_file = path.join(self.config_dir, 'hopconfig.yml')
+        self.config = self._read_config()
+        write_yaml(self.config, self.config_file)
 
     def get(self, section, key, default=None):
-        self.config = _read_config()
-        section = self.config.get(section, None)
-        if not section:
-            raise ConfigException("section {} not found in .hop/hopconfig. This is likeyly a bug".format(section))
-        return section.get(key, default)
+        self.config = self._read_config()
+        if not self.config.get(section, None):
+            self.config[section] = {}
+        return self.config.get(section).get(key, default)
 
-    def put(self, section, key, value):
+    def set(self, section, key, value):
         self.config[section] = self.config[section] or {}
         self.config[section][key] = value
-        write_yaml(self.config, CONFIG_FILE)
+        write_yaml(self.config, self.config_file)
+
+    def _read_config(self):
+        if not path.exists(self.config_dir):
+            makedirs(self.config_dir)
+        if not path.exists(self.config_file):
+            open(self.config_file, 'w').close()
+        return read_yaml(self.config_file)
 
 
-hopconfig = HopConfig()
+
+HOP_STATE_CONFIG = HopStateConfig()
