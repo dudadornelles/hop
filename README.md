@@ -48,6 +48,7 @@ virtualenv -p python3.5 .venv && source .venv/bin/activate
 make init
 ```
 
+The current integration test suite runs against a local Docker provider. This means you need to have Docker installed and running.
 To run the tests:
 ```bash
 make develop
