@@ -47,6 +47,7 @@ $ make init
 
 To run the tests:
 ```bash
+$ make develop
 $ make unit # unit tests
 $ make integration # integration tests
 $ make test # pylint, unit and integration tests
