@@ -1,7 +1,9 @@
 import argparse
+
 import os
 from hop.cli import command_factory
 from hop.core import read_yaml
+
 
 def run():
     parser = create_parser()
@@ -14,6 +16,7 @@ def run():
     hop_config = read_yaml(hop_config_path)
 
     command_factory.create_from_args(args, hop_config).execute()
+
 
 def create_parser():
     config_parser = argparse.ArgumentParser(add_help=False)

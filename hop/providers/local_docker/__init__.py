@@ -8,8 +8,8 @@ def _server_config(config, network):
         'name': config.get('provider.server.name', 'hop-server'),
         'detach': True,
         'ports': {
-            8153: 8153,
-            8154: 8154
+            8153: 18153,
+            8154: 18154
         },
         'hostname': config.get('provider.server.hostname', 'hop-server'),
         'networks': [network]

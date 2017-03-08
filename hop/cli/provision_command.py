@@ -1,5 +1,8 @@
+from importlib import import_module
+
+
 def get_provisioner(provisioner_name):
-    return getattr(__import__('hop.providers.{}'.format(provisioner_name)), provisioner_name)
+    return import_module('hop.providers.{}'.format(provisioner_name))
 
 
 class ProvisionCommand(object):
@@ -18,7 +21,6 @@ class ProvisionCommand(object):
             print("Error initializing provider. Make sure your configuration is correct")
             print(exception)
             exit(1)
-
 
         print("{} - Provisioning gocd".format(self.args.command))
         provisioner.provision(self.hop_config)
