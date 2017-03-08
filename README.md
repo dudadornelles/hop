@@ -12,11 +12,11 @@ $ pip install hop
 ```
 Initializing:
 ```bash
-$ mkdir myGocd && cd myGocd
-$ hop init
+$ hop init myGoCD
 ```
 Provisioning:
 ```bash
+$ cd myGoCD
 $ hop provision
 hop:: Provisioning GoCD
 hop:: Using local_docker provider
