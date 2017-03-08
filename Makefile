@@ -12,6 +12,8 @@ lint:
 requirements:
 	pip install -r requirements.txt
 	pip install -r test-requirements.txt
+	docker pull gocd/gocd-server:latest
+	docker pull gocd/gocd-agent:latest
 
 test: lint
 	nosetests --with-coverage --cover-package=hop --cover-branches --cover-xml --with-xunit
