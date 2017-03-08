@@ -1,14 +1,16 @@
-import docker
 import unittest
+
+import docker
 import hop.providers.local_docker as local_docker
 from hop.core import HopConfig
+
 
 def delete_hop_containers(client):
     for container in client.containers.list(all=True):
         print('found container {}'.format(container.name))
         if container.name.startswith('hoptest'):
             print('deleting {}'.format(container.name))
-            if (container.status == 'running'):
+            if container.status == 'running':
                 container.kill()
             container.remove()
 
@@ -21,10 +23,12 @@ class TestLocalDockerProvider(unittest.TestCase):
 
     def tearDown(self):
         delete_hop_containers(self.client)
+        [n.remove() for n in self.client.networks.list() if n.name == 'hoptest-network']
 
-    def test_provision_should_not_failed_if_you_run_it_twice(self):
+    def test_provision_should_not_fail_if_you_run_it_twice(self):
         config = HopConfig({
             'provider': {
+                'network': 'hoptest-network',
                 'server': {
                     'name': 'hoptest-server'
                 },

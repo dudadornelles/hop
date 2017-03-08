@@ -1,4 +1,4 @@
-init: requirements
+init: requirements develop
 
 install:
 	python setup.py install --record files.txt
@@ -13,20 +13,20 @@ requirements:
 	pip install -r requirements.txt
 	pip install -r test-requirements.txt
 
-test: lint unit integration
+test: lint
 	nosetests --with-coverage --cover-package=hop --cover-branches --cover-xml --with-xunit
 
 unit:
-	nosetests -w test/unit/
+	nosetests -w test/testunit/
 
 integration:
-	nosetests -w test/integration/
+	nosetests -w test/testintegration/
 
 debug-unit:
-	nosetests -w test/unit/ -s
+	nosetests -w test/testunit/ -s
 
 debug-integration:
-	nosetests -w test/integration/ -s
+	nosetests -w test/testintegration/ -s
 
 clean:
 	rm -rf build/ dist/ *.egg-info/ **/*.pyc
