@@ -39,7 +39,10 @@ hop:: created pipeline 'myapp'
 ```
 
 ### Developing hop
+Make sure you have docker running.
+
 Hop is written in python 3.5, and we recommend you use virtualenv to develop hop. After cloning this repository, cd into `hop` and run:
+
 ```bash
 virtualenv -p python3.5 .venv && source .venv/bin/activate
 make init
