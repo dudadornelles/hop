@@ -41,16 +41,16 @@ hop:: created pipeline 'myapp'
 ### Developing hop
 Hop is written in python 3.5, and we recommend you use virtualenv to develop hop. After cloning this repository, cd into `hop` and run:
 ```bash
-$ virtualenv -p python3.5 .venv
-$ make init
+virtualenv -p python3.5 .venv && source .venv/bin/activate
+make init
 ```
 
 To run the tests:
 ```bash
-$ make develop
-$ make unit # unit tests
-$ make integration # integration tests
-$ make test # pylint, unit and integration tests
+make develop
+make unit # unit tests
+make integration # integration tests
+make test # pylint, unit and integration tests
 ```
 
 Take a look at the `Makefile` to see what else is available.
