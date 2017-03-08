@@ -18,7 +18,7 @@ $ hop init
 Provisioning:
 ```bash
 $ hop provision
-hop:: Provisioning GoC
+hop:: Provisioning GoCD
 hop:: Using local_docker provider
 hop:: Starting a GoCD server from hopgocd/hop-server
 hop:: Starting 2 GoCD agents from hopgocd/hop-server
