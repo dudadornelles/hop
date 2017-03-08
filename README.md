@@ -3,6 +3,9 @@
 Hop is a CLI tool written in python you can use to manage GoCD installations using docker and pipeline-as-code.
 
 ## TL;DR:
+
+OBS: this is not currently implemented, is more of an idea of what the end state should look like
+
 Installing
 ```bash
 $ pip install hop
@@ -34,3 +37,20 @@ EOF > apps/myapp.yml
 $ hop configure
 hop:: created pipeline 'myapp'
 ```
+
+### Developing hop
+Hop is written in python 3.5, and we recommend you use virtualenv to develop hop. After cloning this repository, cd into `hop` and run:
+```bash
+$ virtualenv -p python3.5 .venv
+$ make init
+```
+
+To run the tests:
+```bash
+$ make unit # unit tests
+$ make integration # integration tests
+$ make test # pylint, unit and integration tests
+```
+
+Take a look at the `Makefile` to see what else is available.
+
