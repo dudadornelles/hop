@@ -10,7 +10,8 @@ setup(
     author_email='duda@hop-ci.com',
     packages=find_packages(exclude=['contrib', 'docs', 'test*']),
     install_requires=['boto3',
-                      'ruamel.yaml'],
+                      'ruamel.yaml', 
+                      'requests'],
     entry_points={
         'console_scripts': [
             'hop=hop:run',

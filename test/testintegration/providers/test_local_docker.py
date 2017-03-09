@@ -1,8 +1,9 @@
 import unittest
+import os
 
+from hop.core import HopConfig
 import docker
 import hop.providers.local_docker as local_docker
-from hop.core import HopConfig
 
 
 def delete_hop_containers(client):
@@ -18,11 +19,15 @@ def delete_hop_containers(client):
 class TestLocalDockerProvider(unittest.TestCase):
 
     def setUp(self):
+        self.passwd_path = os.path.join(os.getcwd(), 'passwd')
         self.client = docker.from_env()
+
+        open(self.passwd_path, 'w').close()
         delete_hop_containers(self.client)
 
     def tearDown(self):
         delete_hop_containers(self.client)
+        os.remove(self.passwd_path)
         [n.remove() for n in self.client.networks.list() if n.name == 'hoptest-network']
 
     def test_provision_should_not_fail_if_you_run_it_twice(self):

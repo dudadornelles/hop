@@ -8,3 +8,4 @@ nosetests.xml
 coverage.xml
 .coverage
 .hop
+test/**/passwd
