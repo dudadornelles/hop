@@ -1,0 +1,4 @@
+stages:
+  - build:
+      tasks:
+        - script: echo running this build
