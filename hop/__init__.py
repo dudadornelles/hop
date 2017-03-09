@@ -16,4 +16,3 @@ def run():
     hop_config = read_yaml(hop_config_path)
 
     command_factory.create_from_args(args, hop_config).execute()
-

@@ -1,4 +1,10 @@
 import argparse
+import os
+
+def new_dir(string):
+    if os.path.exists(string):
+        raise argparse.ArgumentTypeError("must specify a new directory for the hop project")
+    return string
 
 def create_parser():
     config_parser = argparse.ArgumentParser(add_help=False)
@@ -6,7 +12,8 @@ def create_parser():
     parser = argparse.ArgumentParser()
     sparser = parser.add_subparsers(dest='command')
 
-    sparser.add_parser('init', help='initializes hop (by defaul in the current folder)', parents=[config_parser])
+    init_parser = sparser.add_parser('init', help='initializes hop', parents=[config_parser])
+    init_parser.add_argument('dest_dir', help='destination directory for hop', nargs='?', default='.')
 
     sparser.add_parser('provision', help='provisions gocd', parents=[config_parser])
 
