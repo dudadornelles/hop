@@ -36,8 +36,8 @@ def copy_to_container(src, dest, owner, group, container):
 
 
 def init_security(server_container, url):
-    console("Initializing security")
     # copy passwd
+    console("Updating passwd")
     copy_to_container(src=os.path.join(os.getcwd(), 'passwd'), # TODO: get from hopconfig
                       dest='/etc/go/passwd',
                       container=server_container,
@@ -49,9 +49,9 @@ def init_security(server_container, url):
     response = requests.get('{}/go/admin/restful/configuration/file/GET/xml'.format(url))
     xml, md5 = response.content, response.headers.get('x-cruise-config-md5', None)
     if not md5:
-        console("Initializing security: skipped, it is already configured")
         return
 
+    console("Adding security config to cruise-config.xml")
     security = '<security><passwordFile path="/etc/go/passwd"/></security>'
     cruise_config = fromstring(xml)
     cruise_config.find('server').insert(0, fromstring(security))
@@ -133,8 +133,8 @@ def run_go_agent(client, hop_config, network, network_name, server_config):
     maybe_agents_containers = [c for c in client.containers.list() if c.name.startswith(go_agent_name_prefix)]
     for i in range(0, number_of_agents):
         agent_name = "{0}-{1}".format(go_agent_name_prefix, i)
-        console("Starting {0} from {1}".format(agent_name, go_agent_image))
         if agent_name not in [a.name for a in maybe_agents_containers]:
+            console("Starting {0} from {1}".format(agent_name, go_agent_image))
             agent_config = _agent_config(server_hostname, agent_name, network_name)
             log.debug('creating AGENT with config %s', agent_config)
             agent = client.containers.run(go_agent_image, **agent_config)
