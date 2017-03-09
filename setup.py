@@ -11,7 +11,8 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'test*']),
     install_requires=['boto3',
                       'ruamel.yaml', 
-                      'requests'],
+                      'requests',
+                      'gomatic'],
     entry_points={
         'console_scripts': [
             'hop=hop:run',

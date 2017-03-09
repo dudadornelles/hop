@@ -1,14 +1,14 @@
-from io import StringIO, BytesIO
 import logging as log
 import time
-import tarfile
-import os
-
-from xml.etree.ElementTree import tostring, fromstring, ElementTree, Element
-from hop.core import console
+from xml.etree.ElementTree import tostring, fromstring
 
 import docker
+import os
 import requests
+import tarfile
+from hop.core import console
+from io import BytesIO
+
 
 def create_tar_stream(file_content, file_name):
     # metadata for internal file
@@ -38,12 +38,11 @@ def copy_to_container(src, dest, owner, group, container):
 def init_security(server_container, url):
     # copy passwd
     console("Updating passwd")
-    copy_to_container(src=os.path.join(os.getcwd(), 'passwd'), # TODO: get from hopconfig
+    copy_to_container(src=os.path.join(os.getcwd(), 'passwd'),  # TODO: get from hopconfig
                       dest='/etc/go/passwd',
                       container=server_container,
                       owner='go',
                       group='go')
-
 
     # add security to cruise-config.xml
     response = requests.get('{}/go/admin/restful/configuration/file/GET/xml'.format(url))

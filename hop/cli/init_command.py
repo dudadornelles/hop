@@ -1,5 +1,5 @@
 class InitCommand(object):
-    def __init__(self, args):
+    def __init__(self, args, ):
         self.args = args
 
     def execute(self):

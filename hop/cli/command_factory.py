@@ -1,6 +1,8 @@
 from hop.core import HopConfig
+
 from .init_command import InitCommand
 from .provision_command import ProvisionCommand
+from .configure_command import ConfigureCommand
 
 
 def create_from_args(args, hop_config):
@@ -9,3 +11,5 @@ def create_from_args(args, hop_config):
         return InitCommand(args)
     if args.command == 'provision':
         return ProvisionCommand(args, hop_config)
+    if args.command == 'configure':
+        return ConfigureCommand(args, hop_config)
