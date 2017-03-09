@@ -3,6 +3,13 @@
 Hop is a CLI tool written in python you can use to manage GoCD installations using docker and pipeline-as-code.
 
 ## TL;DR:
+Dependencies
+```
+python3.5
+pip3
+htpasswd
+docker
+```
 
 Installing
 ```bash
