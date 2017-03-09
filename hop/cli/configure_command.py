@@ -41,6 +41,7 @@ class SecureHostRestClient(object):
     def post(self, path, data):
         url = self.__path(path)
         result = requests.post(url, data, auth=self.__auth(), verify=self.__verify_ssl)
+        print(data)
         if result.status_code != 200:
             try:
                 result_json = json.loads(result.text.replace("\\'", "'"))
@@ -73,6 +74,7 @@ class ConfigureCommand(object):
             except Exception as exception:
                 print(exception)
                 print("WARN: couldnt find plan with name '{0}' for app '{1}'".format(app_config['plan'], app_name))
+        self.configurator.save_updated_config()
 
     def get_plan(self, plan_name):
         plan = self.plans.get(plan_name, None)
