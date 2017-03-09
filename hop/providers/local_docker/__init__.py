@@ -81,10 +81,7 @@ def _server_config(config, network):
     return {
         'name': server_name,
         'detach': True,
-        'ports': config.get('provider.server.ports_map', {
-            8153: 18153,
-            8154: 18154
-        }),
+        'ports': config.ports_map,
         'hostname': config.get('provider.server.hostname', server_name),
         'networks': [network]
     }

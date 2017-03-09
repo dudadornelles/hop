@@ -1,6 +1,7 @@
 import os
 
-from hop.core import HopConfig, read_yaml
+from hop.core import read_yaml
+from hop.core.hop_config import HopConfig
 from .init_command import InitCommand
 from .provision_command import ProvisionCommand
 from .configure_command import ConfigureCommand

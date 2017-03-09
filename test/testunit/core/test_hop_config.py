@@ -1,4 +1,5 @@
-from hop.core import HopConfig
+from hop.core.hop_config import HopConfig
+
 import unittest
 
 class TestHopConfig(unittest.TestCase):

@@ -19,8 +19,8 @@ def create_parser():
 
     configure_parser = sparser.add_parser('configure', help='provisions gocd', parents=[config_parser])
     configure_parser.add_argument('context', help='A folder with a set of yml files for app definitions')
-    configure_parser.add_argument('host', help='The host for gocd (use the http url, not the https one')
-    configure_parser.add_argument('user', help='A user with admin rights', default='admin')
-    configure_parser.add_argument('password', help='The GoCD admin password')
+    configure_parser.add_argument('--host', help='GoCD host. e.g: localhost:8153')
+    configure_parser.add_argument('--user', help='User with admin role')
+    configure_parser.add_argument('--password', help='Password for user')
 
     return parser

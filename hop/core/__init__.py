@@ -1,5 +1,4 @@
 import ruamel.yaml as yaml
-from .hop_config import HopConfig
 
 
 def read_yaml(fpath):

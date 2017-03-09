@@ -3,3 +3,4 @@ ruamel.yaml==0.13.14
 docker==2.1.0
 requests
 gomatic
+sh

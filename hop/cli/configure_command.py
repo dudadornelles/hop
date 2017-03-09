@@ -41,7 +41,6 @@ class SecureHostRestClient(object):
     def post(self, path, data):
         url = self.__path(path)
         result = requests.post(url, data, auth=self.__auth(), verify=self.__verify_ssl)
-        print(data)
         if result.status_code != 200:
             try:
                 result_json = json.loads(result.text.replace("\\'", "'"))
@@ -59,9 +58,9 @@ class ConfigureCommand(object):
         self.args = args
         self.hop_config = hop_config
         self.plans = {}
-        self.configurator = GoCdConfigurator(SecureHostRestClient(host=args.host,
-                                                                  username=args.user,
-                                                                  password=args.password,
+        self.configurator = GoCdConfigurator(SecureHostRestClient(host=args.host or hop_config.host,
+                                                                  username=args.user or 'admin',
+                                                                  password=args.password or hop_config.admin_password,
                                                                   ssl=False))
 
     def execute(self):

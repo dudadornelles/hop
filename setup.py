@@ -12,7 +12,8 @@ setup(
     install_requires=['boto3',
                       'ruamel.yaml', 
                       'requests',
-                      'gomatic'],
+                      'gomatic',
+                      'sh'],
     entry_points={
         'console_scripts': [
             'hop=hop:run',

@@ -1,7 +1,7 @@
 import unittest
 import os
 
-from hop.core import HopConfig
+from hop.core.hop_config import HopConfig
 import docker
 import hop.providers.local_docker as local_docker
 
@@ -32,14 +32,13 @@ class TestLocalDockerProvider(unittest.TestCase):
 
     def test_provision_should_not_fail_if_you_run_it_twice(self):
         config = HopConfig({
+            'name': 'testhop',
             'provider': {
                 'network': 'hoptest-network',
                 'server': {
                     'name': 'hoptest-server',
-                    'ports_map': {
-                        8154: 3554,
-                        8153: 3553,
-                    }
+                    'http_port': 3553,
+                    'https_port': 3554
                 },
                 'agents': {
                     'prefix': 'hoptest-agent',
