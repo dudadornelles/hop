@@ -50,8 +50,8 @@ hop:: created pipeline 'myapp'
 
 ## Table of Contents
 
-[Introduction](docs/Introduction.md)
-[Developing hop](#dev_hop)
+* [Introduction](docs/Introduction.md)
+* [Developing hop](#dev_hop)
 
 ### <a name="dev_hop"></a>Developing hop
 Make sure you have docker running.
