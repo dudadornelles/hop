@@ -4,11 +4,9 @@ Hop is a CLI tool written in python you can use to manage GoCD installations usi
 
 ## TL;DR:
 
-OBS: this is not currently implemented, is more of an idea of what the end state should look like
-
 Installing
 ```bash
-$ pip install hop
+$ pip3 install git+https://github.com/dudadornelles/hop.git
 ```
 Initializing:
 ```bash
@@ -20,21 +18,26 @@ $ cd myGoCD
 $ hop provision
 hop:: Provisioning GoCD
 hop:: Using local_docker provider
-hop:: Starting a GoCD server from hopgocd/hop-server
-hop:: Starting 2 GoCD agents from hopgocd/hop-server
-hop:: GoCD running at https://localhost:8154/go
+hop:: Starting GoCD server from hopgocd/hop-server
+hop:: GoCD not yet initialized at http://localhost:18153. Will try again in 15 secs
+hop:: GoCD not yet initialized at http://localhost:18153. Will try again in 15 secs
+hop:: GoCD is up and running
+hop:: Updating passwd
+hop:: Adding security config to cruise-config.xml
+hop:: Starting myGoCD-agent-0 from gocd/gocd-agent
+hop:: Starting myGoCD-agent-1 from gocd/gocd-agent
+hop:: GoCD is up and running
+hop:: GoCD is up and running on http://localhost:18153
 ```
 Configuring:
 ```
-$ echo <EOF
-myapp:
-  plan: custom_pipeline_plan
+$ mkdir apps
+$ cat <<EOF > apps/hop.yml
+hop:
+  plan: pac # pac is the pipeline-as-code plan; this will look for a .gocd.yaml file in the repository 
   git_url: https://github.com/dudadornelles/hop.git
-  stages:
-    - unit-test:
-      command: make develop test
-EOF > apps/myapp.yml
-$ hop configure
+EOF
+$ hop configure apps/
 hop:: created pipeline 'myapp'
 ```
 
