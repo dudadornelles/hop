@@ -68,7 +68,7 @@ def wait_for_go_server(url):
             console("GoCD is up and running".format(url))
             return
         except Exception as exception:
-            log.warning("while waiting for gocd to be up, got %s", exception)
+            log.info("while waiting for gocd to be up, got %s", exception)
             tries += 1
             console("GoCD not yet initialized at {}. Will try again in 15 secs".format(url))
             time.sleep(15)
