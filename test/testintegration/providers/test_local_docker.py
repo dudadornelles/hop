@@ -35,7 +35,11 @@ class TestLocalDockerProvider(unittest.TestCase):
             'provider': {
                 'network': 'hoptest-network',
                 'server': {
-                    'name': 'hoptest-server'
+                    'name': 'hoptest-server',
+                    'ports_map': {
+                        8154: 3554,
+                        8153: 3553,
+                    }
                 },
                 'agents': {
                     'prefix': 'hoptest-agent',

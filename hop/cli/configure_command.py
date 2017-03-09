@@ -1,15 +1,15 @@
+from importlib import import_module
 import json
-
 import os
 import requests
-from gomatic import *
+
+from gomatic import GoCdConfigurator
 from hop.core import read_yaml
-from importlib import import_module
 
 
 def _find_all_apps(yaml_files_folder):
     all_apps_ = {}
-    for root, dirs, files in os.walk(yaml_files_folder):
+    for root, _, files in os.walk(yaml_files_folder):
         for fname in files:
             if fname.endswith(".yml") or fname.endswith(".yaml"):
                 apps = read_yaml(os.path.join(root, fname))

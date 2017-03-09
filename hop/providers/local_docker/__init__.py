@@ -35,10 +35,10 @@ def copy_to_container(src, dest, owner, group, container):
     container.exec_run('chown {0}:{1} -R {2}'.format(owner, group, dest))
 
 
-def init_security(server_container, url):
+def init_security(server_container, url, hop_config):
     # copy passwd
     console("Updating passwd")
-    copy_to_container(src=os.path.join(os.getcwd(), 'passwd'),  # TODO: get from hopconfig
+    copy_to_container(src=hop_config.passwd_path,
                       dest='/etc/go/passwd',
                       container=server_container,
                       owner='go',
@@ -54,7 +54,7 @@ def init_security(server_container, url):
     security = '<security><passwordFile path="/etc/go/passwd"/><admins><user>admin</user></admins></security>'
     cruise_config = fromstring(xml)
     cruise_config.find('server').insert(0, fromstring(security))
-    response = requests.post('{}/go/admin/restful/configuration/file/POST/xml'.format(url), data={
+    requests.post('{}/go/admin/restful/configuration/file/POST/xml'.format(url), data={
         'xmlFile': tostring(cruise_config),
         'md5': md5
     })
@@ -119,7 +119,7 @@ def provision(hop_config):
     server_container = run_go_server(client, server_config, network, hop_config)
 
     wait_for_go_server(url)
-    init_security(server_container, url)
+    init_security(server_container, url, hop_config)
 
     run_go_agent(client, hop_config, network, network_name, server_config)
 

@@ -1,4 +1,5 @@
 from functools import reduce
+import os
 
 
 class HopConfig(dict):
@@ -13,3 +14,7 @@ class HopConfig(dict):
                 return default
 
         return super(HopConfig, self).get(key, default)
+
+    @property
+    def passwd_path(self):
+        return os.path.join(os.getcwd(), self.get("provider.server.passwd_path", 'passwd'))
