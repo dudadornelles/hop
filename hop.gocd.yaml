@@ -1,8 +1,10 @@
-mypipe:
-  materials:
-    repo:
-      git: https://github.com/dudadornelles/hop.git
-  stages:
-    - build:
-        tasks:
-          - script: echo running this build
+pipelines:
+  hop:
+    group: hop
+    materials:
+      repo:
+        git: https://github.com/dudadornelles/hop.git
+    stages:
+      - build:
+          tasks:
+            - script: echo running this build
