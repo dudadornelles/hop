@@ -11,6 +11,7 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'test*']),
     install_requires=['boto3',
                       'ruamel.yaml', 
+                      'docker',
                       'requests',
                       'gomatic',
                       'sh'],
