@@ -1,4 +1,10 @@
 import argparse
+import os
+
+def new_dir(string):
+    if os.path.exists(string):
+        raise argparse.ArgumentTypeError("must specify a new directory for the hop project")
+    return string
 
 def create_parser():
     config_parser = argparse.ArgumentParser(add_help=False)
