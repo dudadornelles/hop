@@ -48,7 +48,12 @@ $ hop configure apps/
 hop:: created pipeline 'myapp'
 ```
 
-### Developing hop
+## Table of Contents
+
+[Introduction](docs/Introduction.md)
+[Developing hop](#dev_hop)
+
+### <a name="dev_hop"></a>Developing hop
 Make sure you have docker running.
 
 Hop is written in python 3.5, and we recommend you use virtualenv to develop hop. After cloning this repository, cd into `hop` and run:
