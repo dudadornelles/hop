@@ -52,7 +52,7 @@ def init_security(server_container, url):
         return
 
     console("Adding security config to cruise-config.xml")
-    security = '<security><passwordFile path="/etc/go/passwd"/></security>'
+    security = '<security><passwordFile path="/etc/go/passwd"/><admins><user>admin</user></admins></security>'
     cruise_config = fromstring(xml)
     cruise_config.find('server').insert(0, fromstring(security))
     response = requests.post('{}/go/admin/restful/configuration/file/POST/xml'.format(url), data={
@@ -110,7 +110,11 @@ def provision(hop_config):
     url = 'http://localhost:{}'.format(server_config['ports'][8153])
 
     # create network
-    network = client.networks.create(network_name, driver="bridge")
+    maybe_network = [n for n in client.networks.list() if n.name == network_name]
+    if len(maybe_network) == 0:
+        network = client.networks.create(network_name, driver="bridge")
+    else:
+        network = maybe_network[0]
 
     # run go server
     server_container = run_go_server(client, server_config, network, hop_config)
