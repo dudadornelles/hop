@@ -7,6 +7,26 @@ from gomatic import GoCdConfigurator
 from hop.core import read_yaml
 
 
+def execute(args, **kwargs):  # pylint: disable=unused-argument
+    hop_config = kwargs['hop_config']
+    configurator = GoCdConfigurator(SecureHostRestClient(host=args.host or hop_config.host,
+                                                         username=args.user or 'admin',
+                                                         password=args.password or hop_config.admin_password,
+                                                         ssl=False))
+
+
+    for app_name, app_config in _find_all_apps(args.context).items():
+        try:
+            plan = get_plan(app_config['plan'])
+            plan.execute(configurator, app_name, app_config)
+        except KeyError:
+            print("WARN: app '{}' does not define a plan".format(app_name))
+        except ImportError as exception:
+            print(exception)
+            print("WARN: couldnt find plan with name '{0}' for app '{1}'".format(app_config['plan'], app_name))
+    configurator.save_updated_config()
+
+
 def _find_all_apps(yaml_files_folder):
     all_apps_ = {}
     for root, _, files in os.walk(yaml_files_folder):
@@ -53,31 +73,5 @@ class SecureHostRestClient(object):
                         url, result.status_code, result))
 
 
-class ConfigureCommand(object):
-    def __init__(self, args, hop_config):
-        self.args = args
-        self.hop_config = hop_config
-        self.plans = {}
-        self.configurator = GoCdConfigurator(SecureHostRestClient(host=args.host or hop_config.host,
-                                                                  username=args.user or 'admin',
-                                                                  password=args.password or hop_config.admin_password,
-                                                                  ssl=False))
-
-    def execute(self):
-        for app_name, app_config in _find_all_apps(self.args.context).items():
-            try:
-                plan = self.get_plan(app_config['plan'])
-                plan.execute(self.configurator, app_name, app_config)
-            except KeyError:
-                print("WARN: app '{}' does not define a plan".format(app_name))
-            except Exception as exception:
-                print(exception)
-                print("WARN: couldnt find plan with name '{0}' for app '{1}'".format(app_config['plan'], app_name))
-        self.configurator.save_updated_config()
-
-    def get_plan(self, plan_name):
-        plan = self.plans.get(plan_name, None)
-        if not plan:
-            plan = import_module('hop.plans.{}'.format(plan_name))
-            self.plans[plan_name] = plan
-        return plan
+def get_plan(plan_name):
+    return import_module('hop.plans.{}'.format(plan_name))

@@ -6,7 +6,6 @@ from sh import htpasswd  # pylint: disable=no-name-in-module
 from hop.core import write_yaml, read_yaml
 from hop.core.hop_config import HopConfig
 
-
 BASE_HOP_CONFIG = '''name: {0}
 provider:
     name: local_docker
@@ -21,6 +20,15 @@ provider:
         prefix: {0}-agent
         instances: 2
 '''
+
+def execute(args, **kwargs):  # pylint: disable=unused-argument
+    hop_dir = Path(args.dest_dir)
+    hop_dir.mkdir(parents=True)
+    hop_config = hop_dir / 'hop.yml'
+    config = generate_hop_config(hop_config, installation_name=hop_dir.name)
+    hop_config = HopConfig(config)
+    get_admin_password(hop_dir, hop_config)
+
 
 def get_admin_password(hop_dir, hop_config):
     password = getpass('admin password:')
@@ -37,16 +45,3 @@ def generate_hop_config(hop_file, installation_name):
     hop_file.touch()
     hop_file.write_text(BASE_HOP_CONFIG.format(installation_name))
     return read_yaml(hop_file.as_posix())
-
-
-class InitCommand(object):
-    def __init__(self, args):
-        self.args = args
-
-    def execute(self):
-        hop_dir = Path(self.args.dest_dir)
-        hop_dir.mkdir(parents=True)
-        hop_config = hop_dir / 'hop.yml'
-        config = generate_hop_config(hop_config, installation_name=hop_dir.name)
-        hop_config = HopConfig(config)
-        get_admin_password(hop_dir, hop_config)

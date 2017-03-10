@@ -7,7 +7,7 @@ from shutil import rmtree
 
 from unittest.mock import patch
 from pathlib import Path
-from hop.cli.init_command import InitCommand
+from hop.cli.commands import init
 from hop import create_parser
 
 TEST_DIR_PATH = '/tmp/testinitcommand'
@@ -35,14 +35,15 @@ class TestInitCommand(unittest.TestCase):
     def tearDown(self):
         rmtree(TEST_DIR_PATH, ignore_errors = True)
 
-    @patch('hop.cli.init_command.getpass')
+    @patch('hop.cli.commands.init.getpass')
     def test_should_create_hop_config_in_specified_folder(self, getpw):
         input_password = 'foo'
         getpw.return_value = input_password
         password_hash = b64encode(sha1(input_password.encode('ascii')).digest())
         expected_passwd_content = 'admin:{SHA}' + password_hash.decode('ascii') + '\n'
 
-        InitCommand(self.parser.parse_args(['init', TEST_DIR_PATH])).execute()
+        args = self.parser.parse_args(['init', TEST_DIR_PATH])
+        init.execute(args)
 
         config = Path(TEST_DIR_PATH + '/hop.yml')
         self.assertTrue(config.is_file(), 'file appears not to exist')

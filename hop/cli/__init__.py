@@ -6,6 +6,7 @@ def new_dir(string):
         raise argparse.ArgumentTypeError("must specify a new directory for the hop project")
     return string
 
+
 def create_parser():
     config_parser = argparse.ArgumentParser(add_help=False)
     config_parser.add_argument('--hop-config', help='path to hop.yml file (defaults to ./hop.yml)')
