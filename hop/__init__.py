@@ -10,9 +10,9 @@ from hop.core.hop_config import HopConfig
 
 def get_command(command_name):
     try:
-        return importlib.import_module(command_name)
+        return importlib.import_module("hop.cli.commands.{}".format(command_name))
     except ImportError:
-        print("ERROR: command '{}' has no implementation under hop.cli.commands")
+        print("ERROR: command '{}' has no implementation under hop.cli.commands".format(command_name))
         exit(1)
 
 def run():
@@ -23,7 +23,7 @@ def run():
         parser.print_help()
         exit(0)
 
-    get_command(args.command).execute(args, hop_config(args))
+    get_command(args.command).execute(args, hop_config=hop_config(args))
 
 def hop_config(args):
     if args.command == 'init':
