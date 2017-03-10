@@ -17,6 +17,7 @@ def provision(hop_config):
     network_name = hop_config.get('provider.network', 'hopnetwork')
     server_config = _server_config(hop_config, network_name)
     url = 'http://localhost:{}'.format(server_config['ports'][8153])
+    https_url = 'https://localhost:{}'.format(server_config['ports'][8154])
 
     network = _create_network(network_name, client)
     server_container = _run_go_server(client, server_config, network, hop_config)
@@ -27,7 +28,7 @@ def provision(hop_config):
     _run_go_agent(client, hop_config, network, network_name, server_config)
 
     _wait_for_go_server(url)
-    console("GoCD is up and running on {}".format(url))
+    console("GoCD is up and running on {}".format(https_url))
 
 
 def _create_network(network_name, client):
