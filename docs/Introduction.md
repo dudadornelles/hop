@@ -13,3 +13,54 @@ a plugin system and are written in python using the [gomatic](https://github.com
 
 Hop is specially valuable for platforms where there are 'categories' of applications (that get built/deployed in similar ways), for now
 you can define a 'plan' to represent a 'category' and thus streamline the process of creating and (most important) deploying new applications.
+
+### Commands
+
+After installing hop with:
+```
+```
+
+You'll find the available commands by running 
+```
+$ hop -h
+usage: hop [-h] {init,provision,configure} ...
+
+positional arguments:
+  {init,provision,configure}
+    init                initializes hop
+    provision           provisions gocd
+    configure           configures gocd
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
+
+#### init: 
+Initializes hop in `dest_dir`. 
+```
+$ hop init -h
+usage: hop init [-h] dest_dir
+
+positional arguments:
+  dest_dir              destination directory for hop
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
+
+### provision
+Runs the `provision` method of the `provider`. The provider is specified in the `hop.yml` file. Eg:
+```yaml
+# hop.yml
+provider:
+  name: local_docker
+```
+```
+$ hop provision -h
+usage: hop provision [-h] [--hop-config HOP_CONFIG]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --hop-config HOP_CONFIG
+                        path to hop.yml file (defaults to ./hop.yml)
+```
