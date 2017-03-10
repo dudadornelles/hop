@@ -1,4 +1,4 @@
-import getpass
+from getpass import getpass
 from pathlib import Path
 import os
 
@@ -24,8 +24,8 @@ provider:
 '''
 
 def get_admin_password(hop_dir, hop_config):
-    password = getpass.getpass('admin password:')
-    repeat_password = getpass.getpass('repeat admin password:')
+    password = getpass('admin password:')
+    repeat_password = getpass('repeat admin password:')
     if password != repeat_password:
         print("ERROR: passwords must match")
         exit(1)

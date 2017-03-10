@@ -35,7 +35,7 @@ class TestInitCommand(unittest.TestCase):
     def tearDown(self):
         rmtree(TEST_DIR_PATH, ignore_errors = True)
 
-    @patch('getpass.getpass')
+    @patch('hop.cli.init_command.getpass')
     def test_should_create_hop_config_in_specified_folder(self, getpw):
         input_password = 'foo'
         getpw.return_value = input_password

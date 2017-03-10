@@ -128,16 +128,12 @@ def ensure_images_available(client, hop_config):
     console("Verifying presense of images")
     agent_image = hop_config.get('provider.agents.image', 'gocd/gocd-agent')
     server_image = hop_config.get('provider.server.image', 'gocd/gocd-server')
-    try:
-        client.images.get(agent_image)
-    except docker.errors.ImageNotFound:
-        console("Image {} not found. Attempting to pull.".format(agent_image))
-        client.images.pull(agent_image)
-    try:
-        client.images.get(server_image)
-    except docker.errors.ImageNotFound:
-        console("Image {} not found. Attempting to pull.".format(server_image))
-        client.images.pull(server_image)
+    for image in [agent_image, server_image]:
+        try:
+            client.images.get(image)
+        except docker.errors.ImageNotFound:
+            console("Image {} not found. Attempting to pull.".format(image))
+            client.images.pull(image)
 
 def run_go_agent(client, hop_config, network, network_name, server_config):
     number_of_agents = hop_config.get('provider.agents.instances', 1)
