@@ -1,0 +1,13 @@
+name: simple
+provider:
+    name: local_docker
+    server:
+        passwd_path: ./passwd
+        http_port: 18153
+        https_port: 18154
+        image: gocdhop/hop-server
+        name: simple-server
+    agents:
+        image: gocdhop/hop-agent
+        prefix: simple-agent
+        instances: 2
