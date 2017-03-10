@@ -1,13 +1,13 @@
 import logging as log
 import time
-from xml.etree.ElementTree import tostring, fromstring
-
-import docker
 import os
-import requests
 import tarfile
-from hop.core import console
 from io import BytesIO
+
+from xml.etree.ElementTree import tostring, fromstring
+from hop.core import console
+import docker
+import requests
 
 
 def create_tar_stream(file_content, file_name):

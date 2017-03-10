@@ -5,7 +5,7 @@ from hop.core import console
 
 
 def ensure_config_repo(configurator, git_url, plugin):
-    config_groups = Ensurance(configurator._GoCdConfigurator__xml_root).ensure_child("config-repos")
+    config_groups = Ensurance(configurator._GoCdConfigurator__xml_root).ensure_child("config-repos") # pylint: disable=protected-access
     gits = config_groups.element.find('config-repo//git')
     if not gits or not any([c for c in gits if c.url == git_url]):
         Ensurance(config_groups.element).append(
