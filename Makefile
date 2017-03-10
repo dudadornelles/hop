@@ -35,7 +35,7 @@ clean:
 	cat files.txt | xargs rm -rf 
 	
 cleandocker:
-	docker kill `docker ps -a -q`
+	docker kill `docker ps -q`
 	docker rm `docker ps -a -q`
 	docker network prune -f
 
