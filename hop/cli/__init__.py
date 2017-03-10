@@ -12,7 +12,7 @@ def create_parser():
     parser = argparse.ArgumentParser()
     sparser = parser.add_subparsers(dest='command')
 
-    init_parser = sparser.add_parser('init', help='initializes hop', parents=[config_parser])
+    init_parser = sparser.add_parser('init', help='initializes hop')
     init_parser.add_argument('dest_dir', help='destination directory for hop')
 
     sparser.add_parser('provision', help='provisions gocd', parents=[config_parser])
