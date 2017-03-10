@@ -101,6 +101,7 @@ def provision(hop_config):
     console("Using local_docker provider")
 
     client = docker.from_env()
+    ensure_images_available(client, hop_config)
     network_name = hop_config.get('provider.network', 'hopnetwork')
     server_config = _server_config(hop_config, network_name)
     url = 'http://localhost:{}'.format(server_config['ports'][8153])
@@ -123,6 +124,20 @@ def provision(hop_config):
     wait_for_go_server(url)
     console("GoCD is up and running on {}".format(url))
 
+def ensure_images_available(client, hop_config):
+    console("Verifying presense of images")
+    agent_image = hop_config.get('provider.agents.image', 'gocd/gocd-agent')
+    server_image = hop_config.get('provider.server.image', 'gocd/gocd-server')
+    try:
+        client.images.get(agent_image)
+    except docker.errors.ImageNotFound:
+        console("Image {} not found. Attempting to pull.".format(agent_image))
+        client.images.pull(agent_image)
+    try:
+        client.images.get(server_image)
+    except docker.errors.ImageNotFound:
+        console("Image {} not found. Attempting to pull.".format(server_image))
+        client.images.pull(server_image)
 
 def run_go_agent(client, hop_config, network, network_name, server_config):
     number_of_agents = hop_config.get('provider.agents.instances', 1)

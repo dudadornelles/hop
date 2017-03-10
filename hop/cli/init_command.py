@@ -1,4 +1,4 @@
-from getpass import getpass
+import getpass
 from pathlib import Path
 import os
 
@@ -15,17 +15,17 @@ provider:
         passwd_path: ./passwd
         http_port: 18153
         https_port: 18154
-        image: hopgocd/hop-server
+        image: gocdhop/hop-server
         name: {0}-server
     agents:
-        image: gocd/gocd-agent
+        image: gocdhop/hop-agent
         prefix: {0}-agent
         instances: 2
 '''
 
 def get_admin_password(hop_dir, hop_config):
-    password = getpass('admin password:')
-    repeat_password = getpass('repeat admin password:')
+    password = getpass.getpass('admin password:')
+    repeat_password = getpass.getpass('repeat admin password:')
     if password != repeat_password:
         print("ERROR: passwords must match")
         exit(1)
