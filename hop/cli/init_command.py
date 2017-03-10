@@ -7,7 +7,6 @@ from hop.core import write_yaml, read_yaml
 from hop.core.hop_config import HopConfig
 
 
-
 BASE_HOP_CONFIG = '''name: {0}
 provider:
     name: local_docker
