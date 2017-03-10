@@ -84,14 +84,15 @@ $ cd myGoCD
 $ hop provision
 hop:: Provisioning GoCD
 hop:: Using local_docker provider
-hop:: Starting GoCD server from hopgocd/hop-server
-hop:: GoCD not yet initialized at http://localhost:18153. Will try again in 15 secs
-hop:: GoCD not yet initialized at http://localhost:18153. Will try again in 15 secs
+hop:: Verifying presense of images
+hop:: Starting GoCD server from gocdhop/myGoCD-server
+hop:: GoCD not yet initialized at https://localhost:18154. Will try again in 15 secs
+hop:: GoCD not yet initialized at https://localhost:18154. Will try again in 15 secs
 hop:: GoCD is up and running
 hop:: Updating passwd
 hop:: Adding security config to cruise-config.xml
-hop:: Starting myGoCD-agent-0 from gocd/gocd-agent
-hop:: Starting myGoCD-agent-1 from gocd/gocd-agent
+hop:: Starting myGoCD-agent-0 from gocdhop/hop-agent
+hop:: Starting myGoCD-agent-1 from gocdhop/hop-agent
 hop:: GoCD is up and running
 hop:: GoCD is up and running on https://localhost:18154
 ```

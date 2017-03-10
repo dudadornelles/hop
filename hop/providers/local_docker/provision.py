@@ -4,12 +4,14 @@ import time
 from xml.etree.ElementTree import tostring, fromstring
 import docker
 import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from hop.core import console
 from hop.providers.local_docker.docker_utils import copy_to_container
 
 
 def provision(hop_config):
+    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
     console("Using local_docker provider")
 
     client = docker.from_env()
@@ -48,7 +50,7 @@ def _init_security(server_container, url, hop_config):
                       group='go')
 
     # add security to cruise-config.xml
-    response = requests.get('{}/go/admin/restful/configuration/file/GET/xml'.format(url))
+    response = requests.get('{}/go/admin/restful/configuration/file/GET/xml'.format(url), verify=False)
     xml, md5 = response.content, response.headers.get('x-cruise-config-md5', None)
     if not md5:
         return
@@ -60,7 +62,7 @@ def _init_security(server_container, url, hop_config):
     requests.post('{}/go/admin/restful/configuration/file/POST/xml'.format(url), data={
         'xmlFile': tostring(cruise_config),
         'md5': md5
-    })
+    }, verify=False)
 
 
 def _server_config(config, network):
@@ -88,7 +90,7 @@ def _wait_for_go_server(url):
     tries = 0
     while tries < 5:
         try:
-            requests.get('{}/go/auth/login'.format(url))
+            requests.get('{}/go/auth/login'.format(url), verify=False)
             console("GoCD is up and running".format(url))
             return
         except Exception as exception:

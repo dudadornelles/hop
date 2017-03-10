@@ -6,8 +6,8 @@ provider:
         http_port: 18153
         https_port: 18154
         image: gocdhop/hop-server
-        name: simple-server
+        name: hop-server
     agents:
         image: gocdhop/hop-agent
-        prefix: simple-agent
+        prefix: hop-agent
         instances: 2

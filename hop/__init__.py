@@ -2,7 +2,6 @@ import argparse
 import importlib
 import os
 
-
 from hop.cli import create_parser
 from hop.core import read_yaml
 from hop.core.hop_config import HopConfig
