@@ -3,54 +3,32 @@
 Hop is a CLI tool written in python you can use to manage GoCD installations using docker and pipeline-as-code.
 
 ## TL;DR:
-Dependencies
+The fastest way to try `hop` is to use the `hop-builds-hop` example. To try it, clone this very repository, install hop and provision the example.
+
+Hop has the following dependencies:
 ```
 python3.5
 pip3
 htpasswd
 docker
 ```
-
-Installing
-```bash
+Install hop with:
+```
 $ pip3 install git+https://github.com/dudadornelles/hop.git
 ```
-Initializing:
-```bash
-$ hop init myGoCD
+Then `cd hop/examples/hop-builds-hop/` and run:
 ```
-Provisioning:
-```bash
-$ cd myGoCD
 $ hop provision
-hop:: Provisioning GoCD
-hop:: Using local_docker provider
-hop:: Starting GoCD server from hopgocd/hop-server
-hop:: GoCD not yet initialized at http://localhost:18153. Will try again in 15 secs
-hop:: GoCD not yet initialized at http://localhost:18153. Will try again in 15 secs
-hop:: GoCD is up and running
-hop:: Updating passwd
-hop:: Adding security config to cruise-config.xml
-hop:: Starting myGoCD-agent-0 from gocd/gocd-agent
-hop:: Starting myGoCD-agent-1 from gocd/gocd-agent
-hop:: GoCD is up and running
-hop:: GoCD is up and running on http://localhost:18153
-```
-Configuring:
-```
-$ mkdir apps
-$ cat <<EOF > apps/hop.yml
-hop:
-  plan: config_repo
-  git_url: https://github.com/dudadornelles/hop.git
-EOF
 $ hop configure apps/
-hop:: created pipeline 'myapp'
 ```
+
+Open your browser on `https://localhost:18154` and login as `admin:admin`. In no time you'll see the `hop` pipeline running.
+
 
 ## Table of Contents
 
 * [Introduction](#intro)
+* [Getting Started](#getting_started)
 * [Reference](#reference)
 * [Developing hop](#dev_hop)
 
@@ -70,9 +48,73 @@ a plugin system and are written in python using the [gomatic](https://github.com
 Hop is specially valuable for platforms where there are 'categories' of applications (that get built/deployed in similar ways), for now
 you can define a 'plan' to represent a 'category' and thus streamline the process of creating and (most important) deploying new applications.
 
-Install hop with python3 and pip3:
+
+## <a name="getting_started"></a> Getting Started
+
+#### Dependencies
+```
+python3.5
+pip3
+htpasswd
+docker
+```
+
+#### Installing 
+Install with hop and python3 and pip3:
 ```
 $ pip3 install git+https://github.com/dudadornelles/hop.git
+```
+
+#### Initializing:
+Initialize `hop` in a destination directory:
+```
+$ hop init myGoCD
+```
+Running `hop init` will place ask your for a password. Remember this passwrod as it is the GoCD admin password. When `hop init` is done,
+cd into your `hop` root and you will find two files:
+
+* hop.yml: the main configuration file for hop. 
+* passwd: the [htpasswd](http://www.htaccesstools.com/articles/htpasswd/) password file. 
+
+
+#### Provisioning:
+Run `hop provision` from the root folder to invoke the provider and start the GoCD server and agents.
+```
+$ cd myGoCD
+$ hop provision
+hop:: Provisioning GoCD
+hop:: Using local_docker provider
+hop:: Starting GoCD server from hopgocd/hop-server
+hop:: GoCD not yet initialized at http://localhost:18153. Will try again in 15 secs
+hop:: GoCD not yet initialized at http://localhost:18153. Will try again in 15 secs
+hop:: GoCD is up and running
+hop:: Updating passwd
+hop:: Adding security config to cruise-config.xml
+hop:: Starting myGoCD-agent-0 from gocd/gocd-agent
+hop:: Starting myGoCD-agent-1 from gocd/gocd-agent
+hop:: GoCD is up and running
+hop:: GoCD is up and running on http://localhost:18153
+```
+
+#### Configuring:
+
+To configure hop, create a folder for your apps (we call this a 'context'):
+```
+$ mkdir apps
+```
+Add a app definition in a yaml file inside that context.
+
+```
+# apps/hop.yml
+hop:
+  plan: config_repo
+  git_url: https://github.com/dudadornelles/hop.git
+```
+
+Run `hop configure <context>`
+```
+$ hop configure apps/
+hop:: executing 'config_repo' plan for hop
 ```
 
 ## <a name="reference"></a>Reference
