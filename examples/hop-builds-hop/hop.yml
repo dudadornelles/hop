@@ -1,4 +1,4 @@
-name: simple
+name: hop
 provider:
     name: local_docker
     server:

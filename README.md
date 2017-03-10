@@ -93,7 +93,7 @@ hop:: Adding security config to cruise-config.xml
 hop:: Starting myGoCD-agent-0 from gocd/gocd-agent
 hop:: Starting myGoCD-agent-1 from gocd/gocd-agent
 hop:: GoCD is up and running
-hop:: GoCD is up and running on http://localhost:18153
+hop:: GoCD is up and running on https://localhost:18154
 ```
 
 #### Configuring:
