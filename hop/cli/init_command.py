@@ -48,6 +48,6 @@ class InitCommand(object):
         hop_dir = Path(self.args.dest_dir)
         hop_dir.mkdir(parents=True)
         hop_config = hop_dir / 'hop.yml'
-        config = generate_hop_config(hop_config, installation_name=self.args.dest_dir)
+        config = generate_hop_config(hop_config, installation_name=hop_dir.name)
         hop_config = HopConfig(config)
         get_admin_password(hop_dir, hop_config)
