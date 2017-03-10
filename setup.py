@@ -3,7 +3,7 @@ import os
 
 setup(
     name='hop-cli',
-    version='0.0.0',
+    version='0.0.1',
     description='Bootstrap your gocd setup using pipeline-as-code with hop.',
     url='https://github.org/dudadornelles/hop',
     author='Duda Dornelles',

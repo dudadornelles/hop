@@ -165,6 +165,33 @@ optional arguments:
                         path to hop.yml file (defaults to ./hop.yml)
 ```
 
+### configure
+Looks for apps in `context` and executes them using the declared `plan`. Example:
+```yaml
+# apps/hop.yaml
+hop:
+  plan: config_repo
+  git_url: https://github.com/dudadornelles/hop
+```
+Then running `hop configure apps/` will add the `git_url` as a yaml config repo in GoCD.
+```
+$ hop configure -h
+usage: hop configure [-h] [--hop-config HOP_CONFIG] [--host HOST]
+                     [--user USER] [--password PASSWORD]
+                     context
+
+positional arguments:
+  context               A folder with a set of yml files for app definitions
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --hop-config HOP_CONFIG
+                        path to hop.yml file (defaults to ./hop.yml)
+  --host HOST           GoCD host. e.g: localhost:8153
+  --user USER           User with admin role
+  --password PASSWORD   Password for user
+```
+
 ### <a name="dev_hop"></a>Developing hop
 Make sure you have docker running.
 
