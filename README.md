@@ -3,7 +3,7 @@
 Hop is a CLI tool written in python you can use to manage GoCD installations using docker and pipeline-as-code.
 
 ## TL;DR:
-The fastest way to try `hop` is to use the `hop-builds-hop` example. To try it, clone this very repository (`git clone https://github.com/dudadornelles/hop.git`), install hop and provision the example.
+The fastest way to try `hop` is to use the `hop-builds-hop` example. To try it, clone this very repository, install hop and provision the example.
 
 Hop has the following dependencies:
 ```
@@ -16,8 +16,10 @@ Install hop with:
 ```
 $ pip3 install git+https://github.com/dudadornelles/hop.git
 ```
-Then `cd hop/examples/hop-builds-hop/` and run:
+Then, to provision and configure `hop-builds-hop`, do:
 ```
+$ git clone https://github.com/dudadornelles/hop.git
+$ cd hop/examples/hop-builds-hop/
 $ hop provision
 $ hop configure apps/ --password admin
 ```
