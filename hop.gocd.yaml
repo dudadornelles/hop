@@ -7,9 +7,4 @@ pipelines:
     stages:
       - build:
           tasks:
-            - script: >
-                virtualenv ~/.hopvenv -p python3 && source ~/.hopvenv/bin/activate &&
-                make init &&
-                make develop &&
-                make test
-
+            - script: virtualenv ~/.hopvenv -p python3.5 && source ~/.hopvenv/bin/activate && make test
