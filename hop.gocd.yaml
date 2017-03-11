@@ -7,4 +7,9 @@ pipelines:
     stages:
       - build:
           tasks:
-            - script: echo running this build
+            - script: >
+                virtualenv ~/.hopvenv -p python3.5 && virtualenv .venv/bin/activate
+                make init
+                make develop
+                make test
+
