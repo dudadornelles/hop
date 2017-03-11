@@ -19,7 +19,7 @@ $ pip3 install git+https://github.com/dudadornelles/hop.git
 Then `cd hop/examples/hop-builds-hop/` and run:
 ```
 $ hop provision
-$ hop configure apps/
+$ hop configure apps/ --password admin
 ```
 
 Open your browser on `https://localhost:18154` and login as `admin:admin`. In no time you'll see the `hop` pipeline running.
