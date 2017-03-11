@@ -11,3 +11,7 @@ provider:
         image: gocdhop/hop-agent
         prefix: hop-agent
         instances: 2
+        volumes:
+            /var/run/docker.sock: 
+                bind: /var/run/docker.sock
+                mode: rw

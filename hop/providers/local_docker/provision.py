@@ -76,13 +76,14 @@ def _server_config(config, network):
     }
 
 
-def _agent_config(server_name, agent_name, network):
+def _agent_config(server_name, agent_name, network_name, hop_config):
     return {
         'environment': ['GO_SERVER_URL=https://{}:8154/go'.format(server_name)],
         'hostname': agent_name,
         'name': agent_name,
-        'networks': [network],
-        'detach': True
+        'networks': [network_name],
+        'detach': True,
+        'volumes': hop_config.get('provider.agents.volumes', {})
     }
 
 
@@ -124,7 +125,7 @@ def _run_go_agent(client, hop_config, network, network_name, server_config):
         agent_name = "{0}-{1}".format(go_agent_name_prefix, i)
         if agent_name not in [a.name for a in maybe_agents_containers]:
             console("Starting {0} from {1}".format(agent_name, go_agent_image))
-            agent_config = _agent_config(server_hostname, agent_name, network_name)
+            agent_config = _agent_config(server_hostname, agent_name, network_name, hop_config)
             log.debug('creating AGENT with config %s', agent_config)
             agent = client.containers.run(go_agent_image, **agent_config)
             network.connect(agent)
