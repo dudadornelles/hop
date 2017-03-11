@@ -8,8 +8,8 @@ pipelines:
       - build:
           tasks:
             - script: >
-                virtualenv ~/.hopvenv -p python3 && virtualenv .venv/bin/activate
-                make init
-                make develop
+                virtualenv ~/.hopvenv -p python3 && source ~/hopvenv/bin/activate &&
+                make init &&
+                make develop &&
                 make test
 
