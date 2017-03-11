@@ -1,9 +1,16 @@
-import unittest
+from unittest import TestCase
+from unittest.mock import patch
 import os
+import subprocess
 
 from hop.core.hop_config import HopConfig
 import docker
 import hop.providers.local_docker as local_docker
+
+
+def get_host_name():
+    host = subprocess.check_output(['bash', '-c', "/sbin/ip route|awk '/default/ { print $3 }'"]).decode('utf-8').strip()
+    return 'localhost' if host == '' else host
 
 
 def delete_hop_containers(client):
@@ -16,7 +23,7 @@ def delete_hop_containers(client):
             container.remove()
 
 
-class TestLocalDockerProvider(unittest.TestCase):
+class TestLocalDockerProvider(TestCase):
 
     def setUp(self):
         self.passwd_path = os.path.join(os.getcwd(), 'passwd')
@@ -30,7 +37,8 @@ class TestLocalDockerProvider(unittest.TestCase):
         os.remove(self.passwd_path)
         [n.remove() for n in self.client.networks.list() if n.name == 'hoptest-network']
 
-    def test_provision_should_not_fail_if_you_run_it_twice(self):
+    @patch('hop.providers.local_docker.provisioner._get_https_url')
+    def test_provision_should_not_fail_if_you_run_it_twice(self, get_https_url_mock):
         config = HopConfig({
             'name': 'testhop',
             'provider': {
@@ -47,6 +55,7 @@ class TestLocalDockerProvider(unittest.TestCase):
             }
         })
 
+        get_https_url_mock.return_value = 'https://{}:3554'.format(get_host_name())
         local_docker.provision(config)
         local_docker.provision(config)
 

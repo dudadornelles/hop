@@ -18,7 +18,7 @@ def provision(hop_config):
     _ensure_images_available(client, hop_config)
     network_name = hop_config.get('provider.network', 'hopnetwork')
     server_config = _server_config(hop_config, network_name)
-    https_url = 'https://localhost:{}'.format(server_config['ports'][8154])
+    https_url = _get_https_url(server_config)
 
     network = _create_network(network_name, client)
     server_container = _run_go_server(client, server_config, network, hop_config)
@@ -30,6 +30,10 @@ def provision(hop_config):
 
     _wait_for_go_server(https_url)
     console("GoCD is up and running on {}".format(https_url))
+
+
+def _get_https_url(server_config):
+    return 'https://localhost:{}'.format(server_config['ports'][8154])
 
 
 def _create_network(network_name, client):
