@@ -1,5 +1,0 @@
-name: hop-gocd
-provider:
-    name: local_docker
-    agents:
-        instances: 2
