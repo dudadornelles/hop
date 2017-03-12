@@ -27,7 +27,8 @@ def execute(args, **kwargs):  # pylint: disable=unused-argument
     hop_config = hop_dir / 'hop.yml'
     config = generate_hop_config(hop_config, installation_name=hop_dir.name)
     hop_config = HopConfig(config)
-    get_admin_password(hop_dir, hop_config)
+    if args.create_passwd:
+        get_admin_password(hop_dir, hop_config)
 
 
 def get_admin_password(hop_dir, hop_config):
