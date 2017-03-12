@@ -194,6 +194,16 @@ optional arguments:
   --password PASSWORD   Password for user
 ```
 
+### destroy
+Invokes the provider to destroy all resources that were created for this GoCD installation. 
+```
+usage: hop destroy [-h] [-f]
+
+optional arguments:
+  -h, --help   show this help message and exit
+  -f, --force  Don't ask for confirmation before destroying GoCD
+```
+
 ### <a name="dev_hop"></a>Developing hop
 Make sure you have docker running.
 

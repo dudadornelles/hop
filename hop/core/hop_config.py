@@ -4,6 +4,10 @@ import os
 from hop.core import read_yaml
 
 
+class BadHopConfiguration(Exception):
+    pass
+
+
 class HopConfig(dict):
     def __init__(self, config_dict):
         dict.__init__(self, config_dict)
@@ -19,11 +23,16 @@ class HopConfig(dict):
 
     @property
     def admin_password(self):
-        return read_yaml(os.path.expanduser('~/.hop{}'.format(self.get('name')))).get('password')
+        saved_settings_file = os.path.expanduser('~/.hop{}'.format(self.get('name')))
+        return read_yaml(saved_settings_file).get('password')
 
     @property
     def passwd_path(self):
         return os.path.join(os.getcwd(), self.get("provider.server.passwd_path", 'passwd'))
+
+    @property
+    def server_hostname(self):
+        return self.get('provider.server.hostname', self.server_name)
 
     @property
     def host(self):
@@ -47,3 +56,22 @@ class HopConfig(dict):
     @property
     def name(self):
         return self.get('name')
+
+    @property
+    def provider_name(self):
+        try:
+            return self['provider']['name']
+        except KeyError:
+            raise BadHopConfiguration("Can't find provider.name in hop.yml, make sure your configuration is correct")
+
+    @property
+    def server_name(self):
+        return self.get('provider.server.name', 'hop-server')
+
+    @property
+    def agents_prefix(self):
+        return self.get('provider.agents.prefix', 'hop-agent')
+
+    @property
+    def volumes(self):
+        return self.get('provider.agents.volumes', {})

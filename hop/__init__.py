@@ -27,5 +27,5 @@ def run():
 def hop_config(args):
     if args.command == 'init':
         return
-    hop_config_path = os.path.join(os.getcwd(), args.hop_config or 'hop.yml')
+    hop_config_path = os.path.join(os.getcwd(), 'hop.yml')
     return HopConfig(config_dict=read_yaml(hop_config_path))

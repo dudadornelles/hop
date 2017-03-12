@@ -1,5 +1,6 @@
 from unittest import TestCase
 from unittest.mock import patch
+from argparse import Namespace
 import os
 import subprocess
 
@@ -65,5 +66,36 @@ class TestLocalDockerProvider(TestCase):
 
         self.assertEquals(server.status, 'running')
         self.assertEquals(agent.status, 'running')
+
+    @patch('hop.providers.local_docker.provisioner._get_https_url')
+    def test_destroy(self, get_https_url_mock):
+        config = HopConfig({
+            'name': 'testhop',
+            'provider': {
+                'network': 'hoptest-network',
+                'server': {
+                    'name': 'hoptest-server',
+                    'http_port': 3553,
+                    'https_port': 3554
+                },
+                'agents': {
+                    'prefix': 'hoptest-agent',
+                    'instances': 1
+                }
+            }
+        })
+        get_https_url_mock.return_value = 'https://{}:3554'.format(get_host_name())
+        local_docker.provision(config)
+
+        # when
+        local_docker.destroy(Namespace(), config)
+
+        # then
+        containers = self.client.containers.list(all=True)
+        maybe_server = [c for c in containers if c.name == 'hoptest-server']
+        maybe_agents = [c for c in containers if c.name == 'hoptest-agent-0']
+
+        self.assertTrue(len(maybe_server) == 0)
+        self.assertTrue(len(maybe_agents) == 0)
 
 

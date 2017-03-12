@@ -70,12 +70,11 @@ def _init_security(server_container, url, hop_config):
 
 
 def _server_config(config, network):
-    server_name = config.get('provider.server.name', 'hop-server')
     return {
-        'name': server_name,
+        'name': config.server_name,
         'detach': True,
         'ports': config.ports_map,
-        'hostname': config.get('provider.server.hostname', server_name),
+        'hostname': config.server_hostname,
         'networks': [network]
     }
 
@@ -87,7 +86,7 @@ def _agent_config(server_name, agent_name, network_name, hop_config):
         'name': agent_name,
         'networks': [network_name],
         'detach': True,
-        'volumes': hop_config.get('provider.agents.volumes', {})
+        'volumes': hop_config.volumes
     }
 
 
@@ -122,7 +121,7 @@ def _run_go_agent(client, hop_config, network, network_name, server_config):
     number_of_agents = hop_config.get('provider.agents.instances', 1)
     server_hostname = server_config['hostname']
     go_agent_image = hop_config.get('provider.agents.image', 'gocd/gocd-agent')
-    go_agent_name_prefix = hop_config.get('provider.agents.prefix', 'hop-agent')
+    go_agent_name_prefix = hop_config.agents_prefix
 
     maybe_agents_containers = [c for c in client.containers.list() if c.name.startswith(go_agent_name_prefix)]
     for i in range(0, number_of_agents):
