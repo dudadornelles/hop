@@ -125,13 +125,14 @@ hop:: executing 'config_repo' plan for hop
 You'll find the available commands by running 
 ```
 $ hop -h
-usage: hop [-h] {init,provision,configure} ...
+usage: hop [-h] {init,provision,configure,destroy} ...
 
 positional arguments:
-  {init,provision,configure}
+  {init,provision,configure,destroy}
     init                initializes hop
-    provision           provisions gocd
-    configure           configures gocd
+    provision           provisions GoCD
+    configure           configures GoCD
+    destroy             destroys GoCD
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -141,13 +142,14 @@ optional arguments:
 Initializes hop in `dest_dir`. 
 ```
 $ hop init -h
-usage: hop init [-h] dest_dir
+usage: hop init [-h] [--skip-passwd] dest_dir
 
 positional arguments:
-  dest_dir              destination directory for hop
+  dest_dir       destination directory for hop
 
 optional arguments:
-  -h, --help            show this help message and exit
+  -h, --help     show this help message and exit
+  --skip-passwd  skip creating passwd file during init
 ```
 
 ### provision:
@@ -159,12 +161,10 @@ provider:
 ```
 ```
 $ hop provision -h
-usage: hop provision [-h] [--hop-config HOP_CONFIG]
+usage: hop provision [-h]
 
 optional arguments:
-  -h, --help            show this help message and exit
-  --hop-config HOP_CONFIG
-                        path to hop.yml file (defaults to ./hop.yml)
+  -h, --help  show this help message and exit
 ```
 
 ### configure
@@ -178,25 +178,23 @@ hop:
 Then running `hop configure apps/` will add the `git_url` as a yaml config repo in GoCD.
 ```
 $ hop configure -h
-usage: hop configure [-h] [--hop-config HOP_CONFIG] [--host HOST]
-                     [--user USER] [--password PASSWORD]
-                     context
+usage: hop configure [-h] [-H HOST] [-u USER] [-p PASSWORD] context
 
 positional arguments:
   context               A folder with a set of yml files for app definitions
 
 optional arguments:
   -h, --help            show this help message and exit
-  --hop-config HOP_CONFIG
-                        path to hop.yml file (defaults to ./hop.yml)
-  --host HOST           GoCD host. e.g: localhost:8153
-  --user USER           User with admin role
-  --password PASSWORD   Password for user
+  -H HOST, --host HOST  GoCD host. e.g: localhost:8153
+  -u USER, --user USER  User with admin role
+  -p PASSWORD, --password PASSWORD
+                        Password for user
 ```
 
 ### destroy
 Invokes the provider to destroy all resources that were created for this GoCD installation. 
 ```
+$ hop destroy -h
 usage: hop destroy [-h] [-f]
 
 optional arguments:
