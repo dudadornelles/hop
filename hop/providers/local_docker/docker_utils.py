@@ -4,6 +4,21 @@ import os
 import tarfile
 from io import BytesIO
 
+import docker
+
+from hop.core import console
+
+
+def ensure_images_available(client, hop_config):
+    console("Verifying presense of images")
+    for image in [hop_config.agent_image, hop_config.server_image]:
+        try:
+            client.images.get(image)
+        except docker.errors.ImageNotFound:
+            console("Image {} not found. Attempting to pull.".format(image))
+            client.images.pull(image)
+
+
 
 def copy_to_container(src, dest, owner, group, container):
 

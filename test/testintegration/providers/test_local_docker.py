@@ -1,12 +1,14 @@
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from argparse import Namespace
 import os
 import subprocess
 
-from hop.core.hop_config import HopConfig
 import docker
+from hop.core.hop_config import HopConfig
 import hop.providers.local_docker as local_docker
+
+import hop
 
 
 def get_host_name():
@@ -38,8 +40,8 @@ class TestLocalDockerProvider(TestCase):
         os.remove(self.passwd_path)
         [n.remove() for n in self.client.networks.list() if n.name == 'hoptest-network']
 
-    @patch('hop.providers.local_docker.provisioner._get_https_url')
-    def test_provision_should_not_fail_if_you_run_it_twice(self, get_https_url_mock):
+    @patch.object(hop.providers.local_docker.provisioner.LocalDockerConfig, 'https_url')
+    def test_provision_should_not_fail_if_you_run_it_twice(self, https_url_mock):
         config = HopConfig({
             'name': 'testhop',
             'provider': {
@@ -55,8 +57,7 @@ class TestLocalDockerProvider(TestCase):
                 }
             }
         })
-
-        get_https_url_mock.return_value = 'https://{}:3554'.format(get_host_name())
+        https_url_mock.__get__ = Mock(return_value='https://{}:3554'.format(get_host_name()))
         local_docker.provision(config)
         local_docker.provision(config)
 
@@ -67,8 +68,8 @@ class TestLocalDockerProvider(TestCase):
         self.assertEquals(server.status, 'running')
         self.assertEquals(agent.status, 'running')
 
-    @patch('hop.providers.local_docker.provisioner._get_https_url')
-    def test_destroy(self, get_https_url_mock):
+    @patch.object(hop.providers.local_docker.provisioner.LocalDockerConfig, 'https_url')
+    def test_destroy(self, https_url_mock):
         config = HopConfig({
             'name': 'testhop',
             'provider': {
@@ -84,7 +85,7 @@ class TestLocalDockerProvider(TestCase):
                 }
             }
         })
-        get_https_url_mock.return_value = 'https://{}:3554'.format(get_host_name())
+        https_url_mock.__get__ = Mock(return_value='https://{}:3554'.format(get_host_name()))
         local_docker.provision(config)
 
         # when

@@ -71,7 +71,3 @@ class HopConfig(dict):
     @property
     def agents_prefix(self):
         return self.get('provider.agents.prefix', 'hop-agent')
-
-    @property
-    def volumes(self):
-        return self.get('provider.agents.volumes', {})

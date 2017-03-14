@@ -7,36 +7,82 @@ import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from hop.core import console
-from hop.providers.local_docker.docker_utils import copy_to_container
+from hop.core.hop_config import HopConfig
+
+from .docker_utils import copy_to_container, ensure_images_available
+
+class LocalDockerConfig(HopConfig):
+    def __init__(self, config):
+        HopConfig.__init__(self, config)
+
+    @property
+    def network_name(self):
+        return self.get('provider.network', 'hopnetwork')
+
+    @property
+    def server_config(self):
+        return {
+            'name': self.server_name,
+            'detach': True,
+            'ports': self.ports_map,
+            'hostname': self.server_hostname,
+            'volumes': self.server_volumes,
+            'networks': [self.network_name]
+        }
+
+    def agent_config(self, agent_name):
+        return {
+            'environment': ['GO_SERVER_URL=https://{}:8154/go'.format(self.server_name)],
+            'hostname': agent_name,
+            'name': agent_name,
+            'networks': [self.network_name],
+            'detach': True,
+            'volumes': self.agent_volumes
+        }
+
+    @property
+    def agent_instance_count(self):
+        return self.get('provider.agents.instances', 1)
+
+    @property
+    def agent_volumes(self):
+        return self.get('provider.agents.volumes', {})
+
+    @property
+    def server_volumes(self):
+        return self.get('provider.server.volumes', {})
+
+    @property
+    def server_image(self):
+        return self.get('provider.server.image', 'gocd/gocd-server')
+
+    @property
+    def agent_image(self):
+        return self.get('provider.agents.image', 'gocd/gocd-agent')
+
+    @property
+    def https_url(self):
+        return 'https://localhost:{}'.format(self.https_port)
 
 
 def provision(hop_config):
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
     console("Using local_docker provider")
-
     client = docker.from_env()
-    _ensure_images_available(client, hop_config)
-    network_name = hop_config.get('provider.network', 'hopnetwork')
-    server_config = _server_config(hop_config, network_name)
-    https_url = _get_https_url(server_config)
+    hop_config = LocalDockerConfig(hop_config)
 
-    network = _create_network(network_name, client)
-    server_container = _run_go_server(client, server_config, network, hop_config)
+    ensure_images_available(client, hop_config)
+    network = _create_network(client, hop_config.network_name)
+    server_container = _run_go_server(client, hop_config, network)
+    _wait_for_go_server(hop_config.https_url)
+    _init_security(server_container, hop_config)
+    _run_go_agent(client, hop_config, network)
+    _wait_for_go_server(hop_config.https_url)
 
-    _wait_for_go_server(https_url)
-    _init_security(server_container, https_url, hop_config)
-
-    _run_go_agent(client, hop_config, network, network_name, server_config)
-
-    _wait_for_go_server(https_url)
-    console("GoCD is up and running on {}".format(https_url))
+    console("GoCD is up and running on {}".format(hop_config.https_url))
 
 
-def _get_https_url(server_config):
-    return 'https://localhost:{}'.format(server_config['ports'][8154])
-
-
-def _create_network(network_name, client):
+def _create_network(client, network_name):
     maybe_network = [n for n in client.networks.list() if n.name == network_name]
     if len(maybe_network) == 0:
         return client.networks.create(network_name, driver="bridge")
@@ -44,8 +90,9 @@ def _create_network(network_name, client):
         return maybe_network[0]
 
 
-def _init_security(server_container, url, hop_config):
+def _init_security(server_container, hop_config):
     # copy passwd
+    url = hop_config.https_url
     console("Updating passwd")
     copy_to_container(src=hop_config.passwd_path,
                       dest='/etc/go/passwd',
@@ -69,27 +116,6 @@ def _init_security(server_container, url, hop_config):
     }, verify=False)
 
 
-def _server_config(config, network):
-    return {
-        'name': config.server_name,
-        'detach': True,
-        'ports': config.ports_map,
-        'hostname': config.server_hostname,
-        'networks': [network]
-    }
-
-
-def _agent_config(server_name, agent_name, network_name, hop_config):
-    return {
-        'environment': ['GO_SERVER_URL=https://{}:8154/go'.format(server_name)],
-        'hostname': agent_name,
-        'name': agent_name,
-        'networks': [network_name],
-        'detach': True,
-        'volumes': hop_config.volumes
-    }
-
-
 def _wait_for_go_server(url):
     tries = 0
     while tries < 5:
@@ -105,43 +131,28 @@ def _wait_for_go_server(url):
     print("ERROR: there was a problem initializing gocd. Check the server logs")
     exit(1)
 
-def _ensure_images_available(client, hop_config):
-    console("Verifying presense of images")
-    agent_image = hop_config.get('provider.agents.image', 'gocd/gocd-agent')
-    server_image = hop_config.get('provider.server.image', 'gocd/gocd-server')
-    for image in [agent_image, server_image]:
-        try:
-            client.images.get(image)
-        except docker.errors.ImageNotFound:
-            console("Image {} not found. Attempting to pull.".format(image))
-            client.images.pull(image)
 
+def _run_go_agent(client, hop_config, network):
+    container_names = [a.name for a in client.containers.list()]
 
-def _run_go_agent(client, hop_config, network, network_name, server_config):
-    number_of_agents = hop_config.get('provider.agents.instances', 1)
-    server_hostname = server_config['hostname']
-    go_agent_image = hop_config.get('provider.agents.image', 'gocd/gocd-agent')
-    go_agent_name_prefix = hop_config.agents_prefix
+    for i in range(0, hop_config.agent_instance_count):
+        agent_name = "{0}-{1}".format(hop_config.agents_prefix, i)
 
-    maybe_agents_containers = [c for c in client.containers.list() if c.name.startswith(go_agent_name_prefix)]
-    for i in range(0, number_of_agents):
-        agent_name = "{0}-{1}".format(go_agent_name_prefix, i)
-        if agent_name not in [a.name for a in maybe_agents_containers]:
-            console("Starting {0} from {1}".format(agent_name, go_agent_image))
-            agent_config = _agent_config(server_hostname, agent_name, network_name, hop_config)
-            log.debug('creating AGENT with config %s', agent_config)
-            agent = client.containers.run(go_agent_image, **agent_config)
+        if not agent_name in container_names:
+            console("Starting {0} from {1}".format(agent_name, hop_config.agent_image))
+            log.debug('creating AGENT with config %s', hop_config.agent_config(agent_name))
+            agent = client.containers.run(hop_config.agent_image, **hop_config.agent_config(agent_name))
             network.connect(agent)
 
 
-def _run_go_server(client, server_config, network, hop_config):
-    go_server_image = hop_config.get('provider.server.image', 'gocd/gocd-server')
-    maybe_server_containers = [c for c in client.containers.list() if c.name == server_config['name']]
+def _run_go_server(client, hop_config, network):
+    go_server_image = hop_config.server_image
+    maybe_server_containers = [c for c in client.containers.list() if c.name == hop_config.server_name]
 
     if len(maybe_server_containers) == 0:
         console("Starting GoCD server from {0}".format(go_server_image))
-        log.debug('creating SERVER with config %s', server_config)
-        server = client.containers.run(go_server_image, **server_config)
+        log.debug('creating SERVER with config %s', hop_config.server_config)
+        server = client.containers.run(go_server_image, **hop_config.server_config)
         network.connect(server)
         return server
     else:
