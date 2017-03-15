@@ -140,6 +140,7 @@ def _run_go_agent(client, hop_config, network):
                                c.name.startswith(hop_config.agents_prefix)], key=lambda c: c.name)
 
     for agent in agent_containers[new_instance_count:]:
+        console("Stopping and destroying {}".format(agent.name))
         agent.kill()
         agent.remove()
 
