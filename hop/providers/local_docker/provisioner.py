@@ -133,9 +133,19 @@ def _wait_for_go_server(url):
 
 
 def _run_go_agent(client, hop_config, network):
-    container_names = [a.name for a in client.containers.list()]
+    new_instance_count = hop_config.agent_instance_count
 
-    for i in range(0, hop_config.agent_instance_count):
+    # scale down
+    agent_containers = sorted([c for c in client.containers.list(all=True) if
+                               c.name.startswith(hop_config.agents_prefix)], key=lambda c: c.name)
+
+    for agent in agent_containers[new_instance_count:]:
+        agent.kill()
+        agent.remove()
+
+    # scale up
+    container_names = sorted([a.name for a in client.containers.list(all=True)])
+    for i in range(0, new_instance_count):
         agent_name = "{0}-{1}".format(hop_config.agents_prefix, i)
 
         if not agent_name in container_names:

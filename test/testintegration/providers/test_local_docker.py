@@ -40,9 +40,22 @@ class TestLocalDockerProvider(TestCase):
         os.remove(self.passwd_path)
         [n.remove() for n in self.client.networks.list() if n.name == 'hoptest-network']
 
+    def assertServerAndAgents(self, num_of_agents):
+        containers = self.client.containers.list(all=True)
+
+        server = next(c for c in containers if c.name == 'hoptest-server')
+        self.assertEquals(server.status, 'running')
+        
+        agents = [c for c in containers if c.name.startswith('hoptest-agent-')]
+        self.assertEquals(len(agents), num_of_agents)
+        for agent in agents:
+            self.assertEquals(agent.status, 'running')
+
+
+
     @patch.object(hop.providers.local_docker.provisioner.LocalDockerConfig, 'https_url')
-    def test_provision_should_not_fail_if_you_run_it_twice(self, https_url_mock):
-        config = HopConfig({
+    def test_provision_should_scale_up_and_down(self, https_url_mock):
+        hop_config = HopConfig({
             'name': 'testhop',
             'provider': {
                 'network': 'hoptest-network',
@@ -53,20 +66,24 @@ class TestLocalDockerProvider(TestCase):
                 },
                 'agents': {
                     'prefix': 'hoptest-agent',
-                    'instances': 1
+                    'instances': 3
                 }
             }
         })
         https_url_mock.__get__ = Mock(return_value='https://{}:3554'.format(get_host_name()))
-        local_docker.provision(config)
-        local_docker.provision(config)
 
-        containers = self.client.containers.list(all=True)
-        server = next(c for c in containers if c.name == 'hoptest-server')
-        agent = next(c for c in containers if c.name == 'hoptest-agent-0')
+        local_docker.provision(hop_config)
+        self.assertServerAndAgents(num_of_agents=3)
 
-        self.assertEquals(server.status, 'running')
-        self.assertEquals(agent.status, 'running')
+        # scaling down
+        hop_config['provider']['agents']['instances'] = 1
+        local_docker.provision(hop_config)
+        self.assertServerAndAgents(num_of_agents=1)
+
+        # scaling up again
+        hop_config['provider']['agents']['instances'] = 2
+        local_docker.provision(hop_config)
+        self.assertServerAndAgents(num_of_agents=2)
 
     @patch.object(hop.providers.local_docker.provisioner.LocalDockerConfig, 'https_url')
     def test_destroy(self, https_url_mock):
