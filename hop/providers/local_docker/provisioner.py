@@ -1,6 +1,5 @@
 import logging as log
 import time
-import os
 
 from xml.etree.ElementTree import tostring, fromstring
 import docker
