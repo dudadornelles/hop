@@ -26,3 +26,4 @@ Then follow the instructions in the "hop-builds-hop" section of this readme to r
 
 Make sure to change the admin password if you plan on using this tutorial to setup a more serious installation of hop.
 
+You should be able to use other `docker-machine` drivers too.
