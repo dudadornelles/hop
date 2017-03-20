@@ -1,5 +1,7 @@
 import logging as log
+from urllib.parse import urlparse
 import time
+import os
 
 from xml.etree.ElementTree import tostring, fromstring
 import docker
@@ -62,7 +64,9 @@ class LocalDockerConfig(HopConfig):
 
     @property
     def https_url(self):
-        return 'https://localhost:{}'.format(self.https_port)
+        docker_host = os.environ.get('DOCKER_HOST', None)
+        host = urlparse(docker_host).hostname if docker_host else 'localhost'
+        return 'https://{0}:{1}'.format(host, self.https_port)
 
 
 def provision(hop_config):
