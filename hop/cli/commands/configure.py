@@ -9,10 +9,11 @@ from hop.core import read_yaml
 
 def execute(args, **kwargs):  # pylint: disable=unused-argument
     hop_config = kwargs['hop_config']
-    configurator = GoCdConfigurator(SecureHostRestClient(host=args.host or hop_config.host,
+    configurator = GoCdConfigurator(SecureHostRestClient(host=args.host or hop_config.configure_url,
                                                          username=args.user or 'admin',
                                                          password=args.password or hop_config.admin_password,
-                                                         ssl=False))
+                                                         ssl=True,
+                                                         verify_ssl=False))
 
 
     for app_name, app_config in _find_all_apps(args.context).items():

@@ -1,4 +1,5 @@
 from functools import reduce
+from urllib.parse import urlparse
 import os
 
 from hop.core import read_yaml
@@ -36,7 +37,12 @@ class HopConfig(dict):
 
     @property
     def host(self):
-        return 'localhost:{}'.format(self.http_port)
+        docker_host = os.environ.get('DOCKER_HOST', None)
+        return urlparse(docker_host).hostname if docker_host else 'localhost'
+
+    @property
+    def configure_url(self):
+        return '{0}:{1}'.format(self.host, self.https_port)
 
     @property
     def ports_map(self): # TODO: move to LocalDockerProviderConfig(HopConfig)
