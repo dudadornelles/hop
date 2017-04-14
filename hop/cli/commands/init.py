@@ -1,10 +1,13 @@
 from getpass import getpass
 from pathlib import Path
 import os
+import sys
+import logging
 
-from sh import htpasswd  # pylint: disable=no-name-in-module
 from hop.core import write_yaml, read_yaml
 from hop.core.hop_config import HopConfig
+
+import sh
 
 BASE_HOP_CONFIG = '''name: {0}
 provider:
@@ -31,6 +34,17 @@ def execute(args, **kwargs):  # pylint: disable=unused-argument
         get_admin_password(hop_dir, hop_config)
 
 
+def _sh_htpasswd():
+    return sh.htpasswd
+
+def htpasswd_fn():
+    try:
+        return _sh_htpasswd()
+    except sh.CommandNotFound:
+        logging.error("'htpasswd' not found in the path. Install 'htpasswd' and try again")
+        sys.exit(1)
+
+
 def get_admin_password(hop_dir, hop_config):
     password = getpass('admin password:')
     repeat_password = getpass('repeat admin password:')
@@ -38,7 +52,8 @@ def get_admin_password(hop_dir, hop_config):
         print("ERROR: passwords must match")
         exit(1)
 
-    htpasswd('-sbc', os.path.join(hop_dir.as_posix(), hop_config.get('provider.server.passwd_path')), 'admin', password)
+    passwd_path = os.path.join(hop_dir.as_posix(), hop_config.get('provider.server.passwd_path'))
+    htpasswd_fn()('-sbc', passwd_path, 'admin', password)
     write_yaml({'password': password}, os.path.expanduser('~/.hop{}'.format(hop_config.name)))
 
 
