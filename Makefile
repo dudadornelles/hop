@@ -15,7 +15,7 @@ pip:
 
 dockerimages:
 	docker pull gocd/gocd-server:latest
-	docker pull gocd/gocd-agent:latest
+	docker pull gocd/gocd-agent-deprecated
 
 requirements: pip dockerimages
 
@@ -36,7 +36,7 @@ debug-integration:
 
 clean:
 	rm -rf build/ dist/ *.egg-info/ **/*.pyc
-	cat files.txt | xargs rm -rf 
+	([[ -f files.txt ]] && cat files.txt | xargs rm -rf) || true
 	
 cleandocker:
 	docker kill `docker ps -q`
