@@ -10,8 +10,8 @@ lint:
 	pylint hop
 
 pip:
-	pip install -r requirements.txt
-	pip install -r test-requirements.txt
+	pip install -r requirements.txt --no-cache-dir
+	pip install -r test-requirements.txt --no-cache-dir
 
 dockerimages:
 	docker pull gocd/gocd-server:latest
