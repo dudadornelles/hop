@@ -4,10 +4,14 @@ from gomatic.xml_operations import Ensurance
 from hop.core import console
 
 
+def config_repo_not_yet_present(git_url, config_groups):
+    git_urls = [g.get('url') for g in config_groups.element.findall('config-repo//git')]
+    return not git_url in git_urls
+
+
 def ensure_config_repo(configurator, git_url, plugin):
     config_groups = Ensurance(configurator._GoCdConfigurator__xml_root).ensure_child("config-repos")  # pylint: disable=protected-access
-    gits = config_groups.element.find('config-repo//git')
-    if not gits or not any([c for c in gits if c.url == git_url]):
+    if config_repo_not_yet_present(git_url, config_groups):
         Ensurance(config_groups.element).append(
             fromstring('<config-repo plugin="{0}"><git url="{1}" /></config-repo>'.format(plugin, git_url)))
 
