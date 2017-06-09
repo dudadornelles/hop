@@ -5,10 +5,15 @@ import os
 import subprocess
 
 import docker
+import urllib3
+from urllib3.exceptions import InsecureRequestWarning
+
 from hop.core.hop_config import HopConfig
 import hop.providers.local_docker as local_docker
 
 import hop
+
+urllib3.disable_warnings(InsecureRequestWarning)
 
 
 def get_host_name():

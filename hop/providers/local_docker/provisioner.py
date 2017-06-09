@@ -4,7 +4,6 @@ import time
 from xml.etree.ElementTree import tostring, fromstring
 import docker
 import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from hop.core import console
 from hop.core.hop_config import HopConfig
@@ -66,7 +65,6 @@ class LocalDockerConfig(HopConfig):
 
 
 def provision(hop_config):
-    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
     console("Using local_docker provider")
     client = docker.from_env()
     hop_config = LocalDockerConfig(hop_config)

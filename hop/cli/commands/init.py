@@ -35,7 +35,7 @@ def execute(args, **kwargs):  # pylint: disable=unused-argument
 
 
 def _sh_htpasswd():
-    return sh.htpasswd
+    return sh.htpasswd  # pylint: disable=no-member
 
 def htpasswd_fn():
     try:
