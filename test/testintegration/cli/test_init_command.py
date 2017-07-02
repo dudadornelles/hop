@@ -27,7 +27,6 @@ provider:
 '''
 
 
-
 class TestInitCommand(unittest.TestCase):
     def setUp(self):
         self.parser = create_parser()

@@ -4,6 +4,7 @@ import os
 import sys
 import logging
 
+from cookiecutter.main import cookiecutter
 from hop.core import write_yaml, read_yaml
 from hop.core.hop_config import HopConfig
 
@@ -24,11 +25,11 @@ provider:
         instances: 2
 '''
 
+
 def execute(args, **kwargs):  # pylint: disable=unused-argument
     hop_dir = Path(args.dest_dir)
-    hop_dir.mkdir(parents=True)
     hop_config = hop_dir / 'hop.yml'
-    config = generate_hop_config(hop_config, installation_name=hop_dir.name)
+    config = generate_hop_config(hop_config, installation_name=hop_dir.name, dest_dir=hop_dir)
     hop_config = HopConfig(config)
     if args.create_passwd:
         get_admin_password(hop_dir, hop_config)
@@ -36,6 +37,7 @@ def execute(args, **kwargs):  # pylint: disable=unused-argument
 
 def _sh_htpasswd():
     return sh.htpasswd  # pylint: disable=no-member
+
 
 def htpasswd_fn():
     try:
@@ -57,7 +59,7 @@ def get_admin_password(hop_dir, hop_config):
     write_yaml({'password': password}, os.path.expanduser('~/.hop{}'.format(hop_config.name)))
 
 
-def generate_hop_config(hop_file, installation_name):
-    hop_file.touch()
-    hop_file.write_text(BASE_HOP_CONFIG.format(installation_name))
+def generate_hop_config(hop_file, installation_name, dest_dir):
+    cookiecutter('https://github.com/crohacz/cookiecutter-hop-template.git', no_input=True,
+                 extra_context={'installation_name': installation_name, 'dest_dir': dest_dir})
     return read_yaml(hop_file.as_posix())

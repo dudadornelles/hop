@@ -13,6 +13,7 @@ def create_parser():
 
     init_parser = sparser.add_parser('init', help='initializes hop')
     init_parser.add_argument('dest_dir', help='destination directory for hop')
+    # init_parser.add_argument('--type', default='hop', help='the type of initialization, default is initialize hop')
     init_parser.add_argument('--skip-passwd', help='skip creating passwd file during init', dest='create_passwd',
                              action='store_false')
     init_parser.set_defaults(create_passwd=True)
