@@ -53,11 +53,11 @@ class LocalDockerConfig(HopConfig):
 
     @property
     def server_image(self):
-        return self.get('provider.server.image', 'gocd/gocd-server')
+        return self.get('provider.server.image', 'gocd/gocd-server-deprecated')
 
     @property
     def agent_image(self):
-        return self.get('provider.agents.image', 'gocd/gocd-agent')
+        return self.get('provider.agents.image', 'gocd/gocd-agent-deprecated')
 
     @property
     def https_url(self):

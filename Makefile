@@ -14,7 +14,7 @@ pip:
 	pip install -r test-requirements.txt --no-cache-dir
 
 dockerimages:
-	docker pull gocd/gocd-server:latest
+	docker pull gocd/gocd-server-deprecated:latest
 	docker pull gocd/gocd-agent-deprecated
 
 requirements: pip dockerimages
